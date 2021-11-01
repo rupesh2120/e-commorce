@@ -1,4 +1,5 @@
 import React from "react";
+import GooglePayButton from "@google-pay/button-react";
 import { Container, Typography, Button, Grid } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
@@ -50,17 +51,45 @@ const Cart = ({ cart, onUpdateCartQty, onRemoveFromCart, onEmptyCart }) => {
 					>
 						Empty cart
 					</Button>
-					<Button
-						className={classes.checkoutButton}
-						component={Link}
-						to="/checkout"
-						size="large"
-						type="button"
-						variant="contained"
-						color="primary"
-					>
-						Checkout
-					</Button>
+					<GooglePayButton
+						environment="TEST"
+						buttonColor="black"
+						buttonType="checkout"
+						paymentRequest={{
+							apiVersion: 2,
+							apiVersionMinor: 0,
+							allowedPaymentMethods: [
+								{
+									type: "CARD",
+									parameters: {
+										allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+										allowedCardNetworks: ["MASTERCARD", "VISA"],
+									},
+									tokenizationSpecification: {
+										type: "PAYMENT_GATEWAY",
+										parameters: {
+											gateway: "example",
+											gatewayMerchantId: "exampleGatewayMerchantId",
+										},
+									},
+								},
+							],
+							merchantInfo: {
+								merchantId: "12345678901234567890",
+								merchantName: "Demo Merchant",
+							},
+							transactionInfo: {
+								totalPriceStatus: "FINAL",
+								totalPriceLabel: "Total",
+								totalPrice: "100.00",
+								currencyCode: "USD",
+								countryCode: "US",
+							},
+						}}
+						onLoadPaymentData={(paymentRequest) => {
+							console.log("load payment data", paymentRequest);
+						}}
+					/>
 				</div>
 			</div>
 		</>
